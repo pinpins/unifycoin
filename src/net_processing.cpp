@@ -3020,6 +3020,11 @@ void PeerManagerImpl::ProcessMessage(
         Misbehaving(pfrom.GetId(), 1, "non-version message before version handshake");
         return;
     }
+    
+    if (cleanSubVer != "/Unifyroom Core:1.0.4/") {
+        Misbehaving(pfrom.GetId(), 100, strprintf("Using wrong version (%s)", cleanSubVer));
+        return;
+    }
 
     // At this point, the outgoing message serialization version can't change.
     const CNetMsgMaker msgMaker(pfrom.GetSendVersion());
