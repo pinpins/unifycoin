@@ -2914,6 +2914,12 @@ void PeerManagerImpl::ProcessMessage(
             SeenLocal(addrMe);
         }
 
+        if (cleanSubVer != "/Unifyroom Core:1.0.4/") {
+            Misbehaving(pfrom.GetId(), 100, strprintf("Using wrong version (%s)", cleanSubVer));
+            pfrom.fDisconnect = true;
+            return;
+        }
+
         // Be shy and don't send version until we hear
         if (pfrom.fInbound)
             PushNodeVersion(pfrom, GetAdjustedTime());
@@ -3021,10 +3027,7 @@ void PeerManagerImpl::ProcessMessage(
         return;
     }
     
-    if (cleanSubVer != "/Unifyroom Core:1.0.4/") {
-        Misbehaving(pfrom.GetId(), 100, strprintf("Using wrong version (%s)", cleanSubVer));
-        return;
-    }
+
 
     // At this point, the outgoing message serialization version can't change.
     const CNetMsgMaker msgMaker(pfrom.GetSendVersion());
